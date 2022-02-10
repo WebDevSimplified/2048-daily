@@ -44,6 +44,7 @@ if (
   gameManager.currentGame.date = new Date()
   grid.randomEmptyCell().tile = new Tile(gameBoard)
   grid.randomEmptyCell().tile = new Tile(gameBoard)
+  saveCurrentState()
 }
 new InputHandler(handleInput)
 showScore()
