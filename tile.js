@@ -1,10 +1,12 @@
+import seededRandom from "./seededRandom"
+
 export default class Tile {
   #value
   #tileElem
   #x
   #y
 
-  constructor(tileContainer, value = Math.random() > 0.5 ? 2 : 4) {
+  constructor(tileContainer, value = seededRandom() > 0.5 ? 2 : 4) {
     this.#tileElem = document.createElement("div")
     this.#tileElem.classList.add("tile")
     tileContainer.appendChild(this.#tileElem)
@@ -53,11 +55,26 @@ export default class Tile {
   }
 
   waitForTransition(animation = false) {
-    return new Promise(resolve => {
-      this.#tileElem.addEventListener(
-        animation ? "animationend" : "transitionend",
-        resolve
-      )
+    return new Promise(
+      resolve => {
+        this.#tileElem.addEventListener(
+          animation ? "animationend" : "transitionend",
+          resolve
+        )
+      },
+      { once: true }
+    )
+  }
+
+  pop({ slow = false, uniform = false } = {}) {
+    this.#tileElem.classList.add("pop")
+    this.#tileElem.style.setProperty("--pop-duration", `${slow ? 200 : 100}ms`)
+    this.#tileElem.style.setProperty(
+      "--pop-magnitude",
+      uniform ? 5 : Math.log2(this.value)
+    )
+    this.waitForTransition().then(() => {
+      this.#tileElem.classList.remove("pop")
     })
   }
 }

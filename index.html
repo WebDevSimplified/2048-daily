@@ -4,11 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <script src="script.js" defer type="module"></script>
+  <title>Daily 2048</title>
+  <script src="script.js" type="module"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="game-board"></div>
+  <header class="header">
+    <button data-help-btn class="icon-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+    </button>
+    <button data-stats-btn class="icon-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><rect fill="none" height="24" width="24"/><g><path d="M7.5,21H2V9h5.5V21z M14.75,3h-5.5v18h5.5V3z M22,11h-5.5v10H22V11z"/></g></svg>
+    </button>
+    <h1 class="title">2048 Daily</h1>
+    <div class="score-container">
+      <span class="score-label">Score</span>
+      <div data-score class="score">
+        <div data-score-amount class="score-amount">0</div>
+    </div>
+    <!-- <button data-settings-btn class="icon-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><path d="M0,0h24v24H0V0z" fill="none"/><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></g></svg>
+    </button> -->
+  </header>
+  <main id="main-game" class="game-board"></main>
+  <div class="modal-overlay" data-help-modal>
+    <div class="modal" data-modal role="dialog" aria-labelledby="helpModalTitle">
+      <button aria-label="Close" class="modal-close-btn" data-modal-close>&times;</button>
+      <header class="modal-header">
+        <h2 id="helpModalTitle" class="modal-title">How To Play</h2>
+      </header>
+      <div class="modal-body">
+        <div class="modal-section">
+          <p>Combine tiles of the same number in an attempt to create a tile with the value 2048.</p>
+          <p>Pressing the arrow keys will move all tiles in the direction of the key pressed. After all the tiles are done moving a new tile with the value of 2 or 4 will be created in a random empty cell.</p>
+          <p>Two tiles with the same number will merge when they collide to create a single tile with double the value.</p>
+          <p>The game is over when there are no valid ways for you to move the tiles.</p>
+        </div>
+        <div class="modal-section game-container">
+          <svg class="arrow-keys" data-arrow-keys xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 178 752 356">
+            <g>
+             <path class="arrow-left" d="m293.72 485.37h-99.562c-4.8242 0-8.7344-3.9102-8.7344-8.7344v-99.562c0-4.8242 3.9102-8.7344 8.7344-8.7344h99.562c4.8242 0 8.7344 3.9102 8.7344 8.7344v99.562c0 4.8242-3.9102 8.7344-8.7344 8.7344zm-90.828-17.469h82.094v-82.094h-82.094z"/>
+             <path class="arrow-down" d="m426.48 485.37h-99.562c-4.8242 0-8.7344-3.9102-8.7344-8.7344v-99.562c0-4.8242 3.9102-8.7344 8.7344-8.7344h99.562c4.8242 0 8.7344 3.9102 8.7344 8.7344v99.562c-0.003907 4.8242-3.9102 8.7344-8.7344 8.7344zm-90.832-17.469h82.094v-82.094h-82.094z"/>
+             <path class="arrow-up" d="m426.48 352.62h-99.562c-4.8242 0-8.7344-3.9102-8.7344-8.7344v-99.562c0-4.8242 3.9102-8.7344 8.7344-8.7344h99.562c4.8242 0 8.7344 3.9102 8.7344 8.7344v99.562c-0.003907 4.8242-3.9102 8.7344-8.7344 8.7344zm-90.832-17.469h82.094v-82.094h-82.094z"/>
+             <path class="arrow-right" d="m559.21 485.37h-99.562c-4.8242 0-8.7344-3.9102-8.7344-8.7344v-99.562c0-4.8242 3.9102-8.7344 8.7344-8.7344h99.562c4.8242 0 8.7344 3.9102 8.7344 8.7344v99.562c0 4.8242-3.9102 8.7344-8.7344 8.7344zm-90.828-17.469h82.094v-82.094h-82.094z"/>
+             <path class="arrow-up" d="m360.1 302.85c-2.2344 0-4.4688-0.85156-6.1719-2.5547-3.4141-3.4102-3.4141-8.9375-0.007812-12.352l16.586-16.602c1.6367-1.6406 3.8594-2.5625 6.1758-2.5625h0.003906c2.3164 0 4.5352 0.92188 6.1758 2.5586l16.582 16.582c3.4102 3.4102 3.4102 8.9414 0 12.352-3.4102 3.4102-8.9414 3.4102-12.352 0l-10.402-10.402-10.41 10.422c-1.7031 1.7031-3.9414 2.5586-6.1797 2.5586z"/>
+             <path class="arrow-down" d="m376.7 452.17c-2.2305 0-4.4609-0.85156-6.168-2.5508l-16.613-16.574c-3.4141-3.4062-3.4219-8.9336-0.015624-12.352 3.4062-3.4141 8.9336-3.4219 12.352-0.015624l10.445 10.418 10.426-10.414c3.4141-3.4102 8.9414-3.4062 12.352 0.007812 3.4062 3.4141 3.4062 8.9414-0.007812 12.352l-16.594 16.574c-1.7109 1.7031-3.9414 2.5547-6.1758 2.5547z"/>
+             <path class="arrow-right" d="m509.46 452.17c-2.2344 0-4.4688-0.85156-6.1758-2.5586-3.4102-3.4102-3.4102-8.9414 0-12.352l10.402-10.402-10.422-10.41c-3.4141-3.4102-3.4141-8.9375-0.007813-12.352 3.4102-3.4141 8.9375-3.4141 12.352-0.007812l16.602 16.586c1.6406 1.6367 2.5625 3.8594 2.5625 6.1758 0 2.3164-0.91797 4.5391-2.5586 6.1797l-16.582 16.582c-1.7031 1.7031-3.9375 2.5586-6.1719 2.5586z"/>
+             <path class="arrow-left" d="m243.94 452.17c-2.2344 0-4.4688-0.85156-6.1719-2.5547l-16.602-16.586c-1.6406-1.6367-2.5625-3.8594-2.5625-6.1758 0-2.3164 0.91797-4.5391 2.5586-6.1797l16.582-16.582c3.4102-3.4102 8.9414-3.4102 12.352 0s3.4102 8.9414 0 12.352l-10.402 10.402 10.422 10.41c3.4141 3.4102 3.4141 8.9375 0.007813 12.352-1.7109 1.707-3.9492 2.5625-6.1836 2.5625z"/>
+            </g>
+          </svg>
+          <div id="instruction-board" class="game-board"></div>
+        </div>
+        <div class="modal-section">
+          <p><strong>IMPORTANT:</strong> Each day a new game is generated which is exactly the same for everyone in the world. Come back each day and share your results with your friends so you can claim your title as the best 2048 player.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

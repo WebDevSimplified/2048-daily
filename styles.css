@@ -3,17 +3,49 @@
   font-family: Arial;
 }
 
-body {
-  background-color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  font-size: 7.5vmin;
+:root {
+  --modal-background-color: #111;
+  --background-color: #333;
+  --text-color: #CCC;
+  --text-color-light: #FFF;
+  --text-color-dark: #AAA;
 }
 
-#game-board {
+body {
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100vh;
+  width: min-content;
+  margin: 0 auto;
+}
+
+.game-container {
+  display: flex;
+  align-items: center;
+  padding: 1em 0;
+}
+
+.arrow-keys {
+  width: max(30vmin, 125px);
+  stroke: var(--text-color);
+  stroke-width: max(.25vmin, 3px);
+  fill: none;
+}
+
+.arrow-keys[data-key="left"] .arrow-left,
+.arrow-keys[data-key="down"] .arrow-down,
+.arrow-keys[data-key="up"] .arrow-up,
+.arrow-keys[data-key="right"] .arrow-right {
+  fill: var(--text-color);
+  stroke: none;
+}
+
+.game-board {
+  margin: auto 0;
+  font-size: calc(var(--cell-size) / 8 * 3);
   background-color: #CCC;
   border-radius: 1vmin;
   display: grid;
@@ -22,6 +54,7 @@ body {
   gap: var(--cell-gap);
   padding: var(--cell-gap);
   position: relative;
+  user-select: none;
 }
 
 .cell {
@@ -38,7 +71,12 @@ body {
   background-color: hsl(200, 50%, var(--background-lightness));
   color: hsl(200, 25%, var(--text-lightness));
   border-radius: 1vmin;
-  transition: 100ms ease-in-out;
+  transition:
+    top 100ms ease-in-out,
+    left 100ms ease-in-out,
+    right 100ms ease-in-out,
+    bottom 100ms ease-in-out,
+    transform var(--pop-duration, 0ms) ease-in-out;
   top: calc(var(--y) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
   left: calc(var(--x) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
   width: var(--cell-size);
@@ -47,9 +85,179 @@ body {
   animation: show 200ms ease-in-out;
 }
 
+.tile.pop {
+  transform: scale(calc(1 + .03 * var(--pop-magnitude)));
+}
+
 @keyframes show {
   0% {
     opacity: .5;
     transform: scale(0);
   }
 }
+
+.header {
+  display: flex;
+  padding-bottom: 1vmin;
+  margin-top: 2.5vmin;
+  border-bottom: 1px solid var(--text-color);
+  align-items: center;
+  gap: 1vmin;
+  color: var(--text-color);
+  fill: var(--text-color);
+}
+
+.title {
+  text-align: center;
+  margin: 0;
+  font-size: max(5vmin, 20px);
+  flex-grow: 1;
+}
+
+.score-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: calc(max(10vmin, 70px) + 1vmin);
+  flex-shrink: 0;
+}
+
+.score-label {
+  font-size: max(2vmin, 10px);
+  color: var(--text-color-dark);
+}
+
+.score-amount {
+  font-size: max(3vmin, 15px);
+  font-weight: bold;
+  transition: transform 100ms ease-in-out;
+}
+
+.score {
+  position: relative;
+}
+
+.score-amount.pop {
+  transform: scale(1.5);
+}
+
+.additional-score {
+  font-size: max(3vmin, 15px);
+  color: var(--text-color-light);
+  position: absolute;
+  left: var(--start-x);
+  bottom: var(--start-y);
+  animation: additionalScoreFade 500ms ease-in-out;
+}
+
+@keyframes additionalScoreFade {
+  100% {
+    opacity: 0;
+    left: var(--end-x);
+    bottom: var(--end-y);
+  }
+}
+
+.icon-btn {
+  width: 5vmin;
+  height: 5vmin;
+  min-width: 35px;
+  min-height: 35px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: fill 150ms ease-in-out;
+  outline-color: var(--text-color-light);
+  flex-shrink: 0;
+}
+
+.icon-btn:hover,
+.icon-btn:focus {
+  fill: var(--text-color-light);
+}
+
+.modal-overlay {
+  position: fixed;
+  background-color: hsla(0, 0%, 0%, .75);
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: 250ms ease-in-out;
+  pointer-events: none;
+}
+
+.modal {
+  font-size: max(2vmin, 16px);
+  position: fixed;
+  overflow-y: auto;
+  height: max-content;
+  width: max(90vmin, 750px);
+  max-height: 90vh;
+  max-width: 90%;
+  background-color: var(--modal-background-color);
+  color: var(--text-color);
+  padding: 1.5em;
+  border-radius: .5em;
+  border: 1px solid var(--background-color);
+  box-shadow: 0 5px 5px 0 var(--background-color);
+  opacity: 0;
+  transform: translateY(25%);
+  transition: inherit;
+}
+
+.modal-title {
+  margin: 0;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.modal-header {
+  margin-bottom: 1.5em;
+}
+
+.modal-body {
+  line-height: 1.4;
+}
+
+.modal-section {
+  border-bottom: 1px solid var(--text-color);
+}
+
+.modal-section:last-child {
+  border-bottom: none;
+}
+
+.modal-close-btn {
+  font-size: max(4vmin, 30px);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 150ms ease-in-out;
+  color: var(--text-color);
+  outline-color: var(--text-color-light);
+  position: absolute;
+  right: .5em;
+  top: .5em;
+}
+
+.modal-close-btn:hover,
+.modal-close-btn:focus {
+  color: var(--text-color-light);
+}
+
+.modal-overlay.show .modal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* TODO: Add light/dark theme Maybe? */
+/* TODO: Add sharing */
+/* TODO: Add instructions */
+/* TODO: Add SEO/Metadata */

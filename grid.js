@@ -1,16 +1,25 @@
-const GRID_SIZE = 4
-const CELL_SIZE = 20
-const CELL_GAP = 2
+import seededRandom from "./seededRandom"
+
+const DEFAULT_GRID_SIZE = 4
+const DEFAULT_CELL_SIZE = 19
+const DEFAULT_CELL_GAP = 2
 
 export default class Grid {
   #cells
 
-  constructor(gridElem) {
-    gridElem.style.setProperty("--grid-size", GRID_SIZE)
-    gridElem.style.setProperty("--cell-size", `${CELL_SIZE}vmin`)
-    gridElem.style.setProperty("--cell-gap", `${CELL_GAP}vmin`)
-    this.#cells = createCellElements(gridElem).map((cell, index) => {
-      return new Cell(cell, index % GRID_SIZE, Math.floor(index / GRID_SIZE))
+  constructor(
+    gridElem,
+    {
+      gridSize = DEFAULT_GRID_SIZE,
+      cellSize = DEFAULT_CELL_SIZE,
+      cellGap = DEFAULT_CELL_GAP,
+    } = {}
+  ) {
+    gridElem.style.setProperty("--grid-size", gridSize)
+    gridElem.style.setProperty("--cell-size", `${cellSize}vmin`)
+    gridElem.style.setProperty("--cell-gap", `${cellGap}vmin`)
+    this.#cells = createCellElements(gridElem, gridSize).map((cell, index) => {
+      return new Cell(cell, index % gridSize, Math.floor(index / gridSize))
     })
   }
 
@@ -39,7 +48,7 @@ export default class Grid {
   }
 
   randomEmptyCell() {
-    const randomIndex = Math.floor(Math.random() * this.#emptyCells.length)
+    const randomIndex = Math.floor(seededRandom() * this.#emptyCells.length)
     return this.#emptyCells[randomIndex]
   }
 }
@@ -83,16 +92,18 @@ class Cell {
   }
 
   mergeTiles() {
-    if (this.tile == null || this.mergeTile == null) return
+    if (this.tile == null || this.mergeTile == null) return 0
     this.tile.value = this.tile.value + this.mergeTile.value
     this.mergeTile.remove()
     this.mergeTile = null
+    this.tile.pop()
+    return this.tile.value
   }
 }
 
-function createCellElements(gridElem) {
+function createCellElements(gridElem, gridSize) {
   const cells = []
-  for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+  for (let i = 0; i < gridSize * gridSize; i++) {
     const cell = document.createElement("div")
     cells.push(cell)
     cell.classList.add("cell")
