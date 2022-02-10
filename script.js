@@ -36,8 +36,7 @@ if (
   isToday(new Date(gameManager.currentGame.date))
 ) {
   gameManager.currentGame.tiles.forEach(t => {
-    const tile = new Tile(gameBoard)
-    tile.value = t.value
+    const tile = new Tile(gameBoard, t.value)
     grid.cellsByColumn[t.x][t.y].tile = tile
   })
 } else {
