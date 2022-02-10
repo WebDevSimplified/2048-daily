@@ -34,16 +34,13 @@ const proxy = new DeepProxy(gameState, {
   },
   set() {
     const result = Reflect.set(...arguments)
-    console.log(gameState.currentGame.seedState)
     gameState.currentGame.seedState = seededRandom.state()
-    console.log(gameState.currentGame.seedState)
     localStorage.setItem("gameState", JSON.stringify(gameState))
     return result
   },
   apply() {
     const result = Reflect.apply(...arguments)
     gameState.currentGame.seedState = seededRandom.state()
-    console.log(gameState.currentGame.seedState)
     localStorage.setItem("gameState", JSON.stringify(gameState))
     return result
   },
