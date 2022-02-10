@@ -240,9 +240,7 @@ async function setupInstructionGrid(instructionGrid) {
 
   const populateCell = (x, y, value) => {
     const cell = instructionGrid.cellsByRow[x][y]
-    const tile = new Tile(instructionBoard)
-    tile.value = value
-    cell.tile = tile
+    cell.tile = new Tile(instructionBoard, value)
   }
 
   const pressKey = direction => {
