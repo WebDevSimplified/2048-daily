@@ -1,7 +1,11 @@
+const focusableElementsSelector =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+
 export default class Modal {
-  constructor(modalContainer, onClose) {
+  constructor(modalContainer, { onClose = () => {}, onOpen = () => {} } = {}) {
     this.modalContainer = modalContainer
     this.onClose = onClose
+    this.onOpen = onOpen
     this.modalContainer.addEventListener("click", e => {
       if (e.target === this.modalContainer) this.hide()
     })
@@ -12,8 +16,23 @@ export default class Modal {
     document.addEventListener("keydown", e => {
       if (!this.isOpen) return
       if (e.key === "Tab") {
-        this.closeBtn.focus()
-        e.preventDefault()
+        const focusableElements = modalContainer.querySelectorAll(
+          focusableElementsSelector
+        )
+        const firstFocusableElement = focusableElements[0]
+        const lastFocusableElement =
+          focusableElements[focusableElements.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusableElement) {
+            lastFocusableElement.focus()
+            e.preventDefault()
+          }
+        } else {
+          if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus()
+            e.preventDefault()
+          }
+        }
       }
       if (e.key === "Escape") this.hide()
     })
@@ -24,22 +43,15 @@ export default class Modal {
   }
 
   show() {
-    this.toggle(true)
+    this.modalContainer.classList.add("show")
     this.previousFocus = document.activeElement
     this.closeBtn.focus()
+    this.onOpen()
   }
 
   hide() {
-    this.toggle(false)
+    this.modalContainer.classList.remove("show")
     ;(this.previousFocus ?? document.body).focus()
     this.onClose()
-  }
-
-  toggle(show) {
-    if (show) {
-      this.modalContainer.classList.toggle("show", show)
-    } else {
-      this.modalContainer.classList.toggle("show")
-    }
   }
 }

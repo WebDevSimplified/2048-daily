@@ -8,8 +8,7 @@ const defaultGameState = {
   },
   stats: {
     highScore: 0,
-    scores: [],
-    gamesPlayed: 0,
+    games: [],
     currentStreak: 0,
     maxStreak: 0,
   },

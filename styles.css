@@ -1,4 +1,4 @@
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   font-family: Arial;
 }
@@ -35,12 +35,32 @@ body {
   fill: none;
 }
 
+.arrow-keys * {
+  transition: transform 100ms ease-in-out;
+  transform-origin: bottom center;
+}
+
 .arrow-keys[data-key="left"] .arrow-left,
 .arrow-keys[data-key="down"] .arrow-down,
 .arrow-keys[data-key="up"] .arrow-up,
 .arrow-keys[data-key="right"] .arrow-right {
   fill: var(--text-color);
   stroke: none;
+}
+
+.arrow-keys[data-key="left"].press .arrow-left,
+.arrow-keys[data-key="down"].press .arrow-down,
+.arrow-keys[data-key="up"].press .arrow-up,
+.arrow-keys[data-key="right"].press .arrow-right {
+  transform: scale(.9) translate(var(--translate-x, 0), 2.5%);
+}
+
+.arrow-keys[data-key="left"].press .arrow-left {
+  --translate-x: -2.5%;
+}
+
+.arrow-keys[data-key="right"].press .arrow-right {
+  --translate-x: 2.5%;
 }
 
 .game-board {
@@ -115,21 +135,70 @@ body {
 }
 
 .score-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   flex-basis: calc(max(10vmin, 70px) + 1vmin);
   flex-shrink: 0;
 }
 
-.score-label {
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: center;
+  gap: max(4vmin, 1.5em);
+  margin-bottom: 1em;
+}
+
+.modal.stat-modal {
+  max-width: min(750px, 90%);
+}
+
+.stat-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.stat-label {
+  position: relative;
+}
+
+.stat-container.best .stat-label::after {
+  content: "New Best";
+  width: max-content;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: .8em;
+  color: var(--text-color-light);
+  animation: bounce 500ms ease-in alternate infinite;
+}
+
+@keyframes bounce {
+  0% {
+    opacity: .25;
+    transform: translate(25%, -100%) rotate(20deg) scale(.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(25%, -100%) rotate(20deg) scale(1);
+  }
+}
+
+.stat-label {
   font-size: max(2vmin, 10px);
   color: var(--text-color-dark);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.stat-amount {
+  font-size: max(3vmin, 15px);
+  font-weight: bold;
+  text-align: center;
 }
 
 .score-amount {
-  font-size: max(3vmin, 15px);
-  font-weight: bold;
   transition: transform 100ms ease-in-out;
 }
 
@@ -257,6 +326,72 @@ body {
   pointer-events: all;
 }
 
+.next-game-time {
+  font-size: 2.5em;
+  font-weight: normal;
+}
+
+.next-game-time-container {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.stats-bottom-section {
+  margin-top: 1em;
+  display: grid;
+  gap: 1em;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+.share-btn {
+  background-color: hsl(200, 50%, 50%);
+  color: hsl(200, 50%, 10%);
+  fill: currentColor;
+  border: none;
+  padding: .5em;
+  font-size: max(4vmin, 20px);
+  font-weight: bold;
+  border-radius: .25em;
+  transition: 150ms ease-in-out;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.share-btn svg {
+  width: 1em;
+  height: 1em;
+  margin-right: .5em;
+}
+
+.share-btn:hover,
+.share-btn:focus {
+  background-color: hsl(200, 50%, 40%);
+  color: hsl(200, 50%, 5%);
+}
+
+.share-btn::after {
+  content: "Copied results to clipboard";
+  background-color: var(--text-color-light);
+  color: var(--modal-background-color);
+  position: absolute;
+  border-radius: .25em;
+  font-size: .5em;
+  padding: .5em;
+  top: -.5em;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+  cursor: default;
+}
+
+.share-btn.show-message::after {
+  opacity: 1;
+}
+
 /* TODO: Add light/dark theme Maybe? */
-/* TODO: Add sharing */
 /* TODO: Add SEO/Metadata */

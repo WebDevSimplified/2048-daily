@@ -73,7 +73,7 @@ export default class Tile {
       "--pop-magnitude",
       uniform ? 5 : Math.log2(this.value)
     )
-    this.waitForTransition().then(() => {
+    return this.waitForTransition().then(() => {
       this.#tileElem.classList.remove("pop")
     })
   }
