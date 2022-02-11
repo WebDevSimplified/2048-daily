@@ -271,8 +271,7 @@ function showScore(additionalScore) {
   scoreAmountElem.classList.add("pop")
   scoreAmountElem.addEventListener(
     "transitionend",
-    e => {
-      console.log(e)
+    () => {
       scoreAmountElem.classList.remove("pop")
     },
     { once: true }
