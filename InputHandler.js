@@ -5,72 +5,76 @@ export default class InputHandler {
   #callback
   #boundHandleKeyboardInput
   #boundHandleTouchStart
+  #gameBoardElem
 
-  constructor(callback) {
+  constructor(callback, gameBoardElem) {
+    this.#gameBoardElem = gameBoardElem
     this.#boundHandleKeyboardInput = this.#handleKeyboardInput.bind(this)
     this.#boundHandleTouchStart = this.#handleTouchStart.bind(this)
     this.#callback = callback
-    this.#setupInput()
   }
 
-  #setupInput() {
+  setupInput() {
     window.addEventListener("keydown", this.#boundHandleKeyboardInput, {
       once: true,
     })
-    window.addEventListener("touchstart", this.#boundHandleTouchStart, {
-      once: true,
-      passive: false,
-    })
+    this.#gameBoardElem.addEventListener(
+      "touchstart",
+      this.#boundHandleTouchStart,
+      {
+        once: true,
+        passive: false,
+      }
+    )
   }
 
-  #stopInput() {
+  stopInput() {
     window.removeEventListener("keydown", this.#boundHandleKeyboardInput)
-    window.removeEventListener("touchstart", this.#boundHandleTouchStart)
+    this.#gameBoardElem.removeEventListener(
+      "touchstart",
+      this.#boundHandleTouchStart
+    )
   }
 
   #handleTouchStart(e) {
-    this.#stopInput()
+    this.stopInput()
     e.preventDefault()
 
     const startTouchData = e.changedTouches[0]
     const startTime = new Date()
 
-    window.addEventListener("touchmove", handleTouchMove, { passive: false })
-    window.addEventListener(
+    this.#gameBoardElem.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+    })
+    this.#gameBoardElem.addEventListener(
       "touchend",
       async e => {
         e.preventDefault()
-        window.removeEventListener("touchmove", handleTouchMove)
+        this.#gameBoardElem.removeEventListener("touchmove", handleTouchMove)
 
         const endTouchData = e.changedTouches[0]
         if (new Date() - startTime > ALLOWED_GESTURE_TIME) {
-          this.#setupInput()
+          this.setupInput()
           return
         }
         const distanceX = endTouchData.pageX - startTouchData.pageX
         const distanceY = endTouchData.pageY - startTouchData.pageY
 
         if (Math.abs(distanceX) >= THRESHOLD_DISTANCE) {
-          const result = await this.#callback(
-            distanceX > 0 ? "ArrowRight" : "ArrowLeft"
-          )
-          if (result) this.#setupInput()
+          await this.#callback(distanceX > 0 ? "ArrowRight" : "ArrowLeft")
         } else if (Math.abs(distanceY) >= THRESHOLD_DISTANCE) {
-          const result = await this.#callback(
-            distanceY > 0 ? "ArrowDown" : "ArrowUp"
-          )
-          if (result) this.#setupInput()
-        } else {
-          this.#setupInput()
+          await this.#callback(distanceY > 0 ? "ArrowDown" : "ArrowUp")
         }
+        this.setupInput()
       },
       { once: true }
     )
   }
 
   async #handleKeyboardInput(e) {
-    this.#stopInput()
-    if (await this.#callback(e.key)) this.#setupInput()
+    this.stopInput()
+    await this.#callback(e.key)
+    this.setupInput()
   }
 }
 

@@ -1,3 +1,4 @@
+import { animateElement, waitForAnimation } from "./animation"
 import seededRandom from "./seededRandom"
 
 export default class Tile {
@@ -54,27 +55,16 @@ export default class Tile {
     this.#tileElem.remove()
   }
 
-  waitForTransition(animation = false) {
-    return new Promise(
-      resolve => {
-        this.#tileElem.addEventListener(
-          animation ? "animationend" : "transitionend",
-          resolve
-        )
-      },
-      { once: true }
-    )
+  waitForTransition() {
+    return waitForAnimation(this.#tileElem)
   }
 
   pop({ slow = false, uniform = false } = {}) {
-    this.#tileElem.classList.add("pop")
     this.#tileElem.style.setProperty("--pop-duration", `${slow ? 200 : 100}ms`)
     this.#tileElem.style.setProperty(
       "--pop-magnitude",
       uniform ? 5 : Math.log2(this.value)
     )
-    return this.waitForTransition().then(() => {
-      this.#tileElem.classList.remove("pop")
-    })
+    return animateElement(this.#tileElem, "pop")
   }
 }

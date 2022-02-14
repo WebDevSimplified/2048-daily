@@ -1,7 +1,9 @@
+import { isToday } from "date-fns"
 import defaultsDeep from "lodash/fp/defaultsDeep"
 import DeepProxy from "proxy-deep"
 import seededRandom from "./seededRandom"
 
+const defaultCurrentGame = { score: 0, tiles: [], date: new Date() }
 const defaultGameState = {
   userSettings: {
     showIntro: true,
@@ -12,12 +14,18 @@ const defaultGameState = {
     currentStreak: 0,
     maxStreak: 0,
   },
-  currentGame: { score: 0, tiles: [], date: new Date() },
+  currentGame: defaultCurrentGame,
 }
 const gameState = defaultsDeep(
   defaultGameState,
   JSON.parse(localStorage.getItem("gameState")) || {}
 )
+
+gameState.currentGame.date = new Date(gameState.currentGame.date)
+
+if (!isToday(gameState.currentGame.date)) {
+  gameState.currentGame = defaultCurrentGame
+}
 
 const proxy = new DeepProxy(gameState, {
   get() {
