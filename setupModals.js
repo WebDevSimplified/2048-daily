@@ -92,6 +92,7 @@ async function setupInstructionGrid(modal) {
   })
 
   delete arrowKeys.dataset.key
+  arrowKeys.classList.remove("press")
   populateCell(1, 1, 2)
   await wait()
   await performAction(0, 2, 2, "left")
