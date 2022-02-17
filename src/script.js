@@ -66,15 +66,19 @@ async function handleInput(direction) {
 function moveTiles(direction) {
   switch (direction) {
     case "ArrowUp":
+    case "k":
       if (!grid.canMoveTilesUp()) throw new InvalidMoveError()
       return grid.moveTilesUp()
     case "ArrowDown":
+    case "j":
       if (!grid.canMoveTilesDown()) throw new InvalidMoveError()
       return grid.moveTilesDown()
     case "ArrowLeft":
+    case "h":
       if (!grid.canMoveTilesLeft()) throw new InvalidMoveError()
       return grid.moveTilesLeft()
     case "ArrowRight":
+    case "l":
       if (!grid.canMoveTilesRight()) throw new InvalidMoveError()
       return grid.moveTilesRight()
     default:
