@@ -1,5 +1,5 @@
-const THRESHOLD_DISTANCE = 150
-const ALLOWED_GESTURE_TIME = 300
+const THRESHOLD_DISTANCE = 75
+const ALLOWED_GESTURE_TIME = 500
 
 export default class InputHandler {
   #callback
