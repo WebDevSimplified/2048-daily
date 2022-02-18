@@ -98,18 +98,21 @@ body {
     top 100ms ease-in-out,
     left 100ms ease-in-out,
     right 100ms ease-in-out,
-    bottom 100ms ease-in-out,
-    transform var(--pop-duration, 0ms) ease-in-out;
+    bottom 100ms ease-in-out;
   top: calc(var(--y) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
   left: calc(var(--x) * (var(--cell-size) + var(--cell-gap)) + var(--cell-gap));
   width: var(--cell-size);
   height: var(--cell-size);
   font-weight: bold;
+}
+
+.tile[data-animation="show"] {
   animation: show 200ms ease-in-out;
 }
 
 .tile[data-animation="pop"] {
-  transform: scale(calc(1 + .03 * var(--pop-magnitude)));
+  --pop-scale: calc(1 + .03 * var(--pop-magnitude));
+  animation: pop var(--pop-duration, 0ms) ease-in-out alternate 2;
 }
 
 @keyframes show {
@@ -210,7 +213,14 @@ body {
 }
 
 .score-amount[data-animation="pop"] {
-  transform: scale(1.5);
+  --pop-scale: 1.5;
+  animation: pop 100ms ease-in-out alternate 2;
+}
+
+@keyframes pop {
+  100% {
+    transform: scale(var(--pop-scale));
+  }
 }
 
 .additional-score {

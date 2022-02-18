@@ -10,6 +10,7 @@ export default class Tile {
   constructor(tileContainer, value = seededRandom() > 0.5 ? 2 : 4) {
     this.#tileElem = document.createElement("div")
     this.#tileElem.classList.add("tile")
+    animateElement(this.#tileElem, "show")
     tileContainer.appendChild(this.#tileElem)
     this.value = value
   }

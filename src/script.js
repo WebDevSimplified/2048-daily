@@ -16,8 +16,6 @@ const inputHandler = new InputHandler(handleInput, gameBoard)
 const { statsModal, helpModal } = setupModals(inputHandler)
 const grid = new Grid(gameBoard)
 
-setupGame()
-
 if (
   gameManager.currentGame.tiles.length > 0 &&
   isToday(gameManager.currentGame.date)
@@ -163,5 +161,3 @@ async function gameOverDanceModal() {
   await wait(500)
   statsModal.show()
 }
-
-function setupGame() {}
